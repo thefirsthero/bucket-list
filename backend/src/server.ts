@@ -16,32 +16,14 @@ const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(",")
   : ["http://localhost:5173", "http://localhost:5174"];
 
-// Handle preflight requests explicitly FIRST
-app.options(
-  "*",
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    optionsSuccessStatus: 204,
-  }),
-);
-
-// Middleware - CORS must come BEFORE helmet
+// Middleware
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false,
-  }),
-);
+app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -49,8 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 // Request logging middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  console.log(`Origin: ${req.headers.origin}`);
-  console.log(`CORS_ORIGINS env:`, allowedOrigins);
   next();
 });
 

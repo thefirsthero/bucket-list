@@ -114,8 +114,8 @@ export function ItemDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="upcoming_year">Upcoming Year</SelectItem>
-                <SelectItem value="general">General</SelectItem>
+                <SelectItem value="upcoming_year">Current Goals</SelectItem>
+                <SelectItem value="general">Someday</SelectItem>
               </SelectContent>
             </Select>
           </div>

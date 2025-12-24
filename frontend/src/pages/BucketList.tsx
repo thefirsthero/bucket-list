@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PageHeader, PageHeaderHeading } from "@/components/page-header";
+
 import { BucketListSection } from "@/components/BucketListSection";
 import { ItemDialog } from "@/components/ItemDialog";
 import { BucketItem, ItemCategory, ItemStatus } from "@/types/bucket";
@@ -118,10 +118,7 @@ export default function BucketList() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <PageHeader>
-          <PageHeaderHeading>My Bucket List</PageHeaderHeading>
-        </PageHeader>
+      <div className="pt-6 space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
           <Skeleton className="h-100" />
           <Skeleton className="h-100" />
@@ -131,14 +128,10 @@ export default function BucketList() {
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader>
-        <PageHeaderHeading>My Bucket List</PageHeaderHeading>
-      </PageHeader>
-
+    <div className="pt-6 space-y-6">
       <div className="grid gap-6 md:grid-cols-2">
         <BucketListSection
-          title="Upcoming Year"
+          title="Current Goals"
           category="upcoming_year"
           items={upcomingYearItems}
           onItemsReorder={(items) => handleItemsReorder("upcoming_year", items)}
@@ -149,7 +142,7 @@ export default function BucketList() {
         />
 
         <BucketListSection
-          title="General Bucket List"
+          title="Someday"
           category="general"
           items={generalItems}
           onItemsReorder={(items) => handleItemsReorder("general", items)}

@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { PageHeader } from "@/components/page-header";
+import { PageHeader, PageHeaderHeading } from "@/components/page-header";
 import { BucketListSection } from "@/components/BucketListSection";
 import { ItemDialog } from "@/components/ItemDialog";
-import { BucketItem, ItemCategory } from "@/types/bucket";
+import { BucketItem, ItemCategory, ItemStatus } from "@/types/bucket";
 import { apiService } from "@/services/api";
-import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BucketList() {
@@ -46,7 +45,7 @@ export default function BucketList() {
     title: string;
     description: string;
     category: ItemCategory;
-    status: any;
+    status: ItemStatus;
   }) => {
     try {
       if (editingItem) {
@@ -120,10 +119,12 @@ export default function BucketList() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <PageHeader title="My Bucket List" />
+        <PageHeader>
+          <PageHeaderHeading>My Bucket List</PageHeaderHeading>
+        </PageHeader>
         <div className="grid gap-6 md:grid-cols-2">
-          <Skeleton className="h-[400px]" />
-          <Skeleton className="h-[400px]" />
+          <Skeleton className="h-100" />
+          <Skeleton className="h-100" />
         </div>
       </div>
     );
@@ -131,10 +132,9 @@ export default function BucketList() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="My Bucket List"
-        description="Track your dreams and goals for the upcoming year and beyond"
-      />
+      <PageHeader>
+        <PageHeaderHeading>My Bucket List</PageHeaderHeading>
+      </PageHeader>
 
       <div className="grid gap-6 md:grid-cols-2">
         <BucketListSection

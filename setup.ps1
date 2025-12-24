@@ -72,15 +72,11 @@ Write-Host "   2. Run migrations if you skipped it: cd backend; npm run migrate"
 Write-Host ""
 Write-Host "🚀 To start the application:" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "   Option A - Docker (Recommended):"
-Write-Host "   PS> docker-compose up --build"
-Write-Host ""
-Write-Host "   Option B - Local Development:"
 Write-Host "   Terminal 1: cd backend; npm run dev"
 Write-Host "   Terminal 2: cd frontend; npm run dev"
 Write-Host ""
 Write-Host "🌐 Access:" -ForegroundColor Cyan
-Write-Host "   Frontend: http://localhost (Docker) or http://localhost:5173 (Local)"
+Write-Host "   Frontend: http://localhost:5173"
 Write-Host "   Backend:  http://localhost:3001"
 Write-Host ""
 Write-Host "📖 For more details, see QUICKSTART.md" -ForegroundColor Cyan

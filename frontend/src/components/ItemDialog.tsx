@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -73,7 +72,7 @@ export function ItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>{item ? "Edit Item" : "Add New Item"}</DialogTitle>
           <DialogDescription>

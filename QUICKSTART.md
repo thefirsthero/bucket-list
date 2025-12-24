@@ -7,25 +7,15 @@
 
 ## Step 2: Configure environment
 
-```bash
-# Root directory
-cp .env.example .env
-
-# Edit .env with your actual database credentials
-# DATABASE_URL=postgresql://user:password@host-project.aivencloud.com:12345/defaultdb
-# DATABASE_SSL=true
-# DB_SCHEMA=bucket_list
-```
-
-Also configure backend:
+Configure backend:
 
 ```bash
 cd backend
 cp .env.example .env
-# Edit backend/.env with the same database credentials
+# Edit backend/.env with your database credentials
 ```
 
-And frontend:
+Configure frontend:
 
 ```bash
 cd ../frontend
@@ -45,26 +35,10 @@ This will create the `bucket_list` schema and tables in your database.
 
 ## Step 4: Start the application
 
-### Option A: Using Docker (Recommended)
-
-From the root directory:
-
-```bash
-docker-compose up --build
-```
-
-Access:
-
-- Frontend: http://localhost
-- Backend API: http://localhost:3001
-
-### Option B: Local Development
-
 Terminal 1 (Backend):
 
 ```bash
 cd backend
-npm install
 npm run dev
 ```
 
@@ -103,9 +77,8 @@ Your bucket list application is now running! You can:
 
 - Check that backend is running on port 3001
 - Update VITE_API_URL in frontend/.env if needed
-- For Docker, both services should be on the same network
 
 ### Port conflicts
 
-- Change ports in docker-compose.yml if 80 or 3001 are taken
-- Update VITE_API_URL accordingly
+- Change PORT in backend/.env if 3001 is taken
+- Update VITE_API_URL in frontend/.env accordingly

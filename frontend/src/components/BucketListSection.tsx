@@ -33,7 +33,6 @@ interface BucketListSectionProps {
 
 export function BucketListSection({
   title,
-  category,
   items,
   onItemsReorder,
   onToggleComplete,

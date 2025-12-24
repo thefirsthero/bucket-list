@@ -14,8 +14,7 @@ A full-stack bucket list application with drag-and-drop functionality, status ma
   - Maybe
   - Completed
 - 🎨 **Modern UI**: Built with React, TypeScript, Tailwind CSS, and shadcn/ui
-- 🐳 **Dockerized**: Both frontend and backend are containerized
-- 🗄️ **PostgreSQL**: Database with Aiven cloud support
+- ️ **PostgreSQL**: Database with Aiven cloud support
 
 ## Tech Stack
 
@@ -41,8 +40,8 @@ A full-stack bucket list application with drag-and-drop functionality, status ma
 
 ### Prerequisites
 
-- Docker and Docker Compose
-- Node.js 20+ (for local development)
+- Node.js 20+
+- npm or yarn
 - PostgreSQL database (Aiven or local)
 
 ### Setup
@@ -167,42 +166,18 @@ bucket-list/
 │   │   ├── routes/         # API routes
 │   │   ├── types/          # TypeScript types
 │   │   └── server.ts       # Express server
-│   ├── Dockerfile
 │   └── package.json
-├── frontend/               # React frontend
-│   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── config/        # App configuration
-│   │   ├── contexts/      # React contexts
-│   │   ├── hooks/         # Custom hooks
-│   │   ├── lib/           # Utilities
-│   │   ├── pages/         # Page components
-│   │   ├── services/      # API service
-│   │   └── types/         # TypeScript types
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── package.json
-└── docker-compose.yml      # Docker orchestration
-```
-
-## Docker Commands
-
-```bash
-# Build and start all services
-docker-compose up --build
-
-# Start in detached mode
-docker-compose up -d
-
-# Stop all services
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Rebuild specific service
-docker-compose build backend
-docker-compose build frontend
+└── frontend/               # React frontend
+    ├── src/
+    │   ├── components/    # React components
+    │   ├── config/        # App configuration
+    │   ├── contexts/      # React contexts
+    │   ├── hooks/         # Custom hooks
+    │   ├── lib/           # Utilities
+    │   ├── pages/         # Page components
+    │   ├── services/      # API service
+    │   └── types/         # TypeScript types
+    └── package.json
 ```
 
 ## License

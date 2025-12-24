@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, MoreVertical, Trash2, Edit } from "lucide-react";
@@ -61,8 +60,8 @@ export function BucketListItem({
           {/* Checkbox */}
           <Checkbox
             checked={item.completed}
-            onCheckedChange={(checked) =>
-              onToggleComplete(item.id, checked as boolean)
+            onCheckedChange={(checked: boolean) =>
+              onToggleComplete(item.id, checked)
             }
             className="mt-1"
           />

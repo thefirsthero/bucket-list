@@ -16,14 +16,20 @@ const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(",")
   : ["http://localhost:5173", "http://localhost:5174"];
 
-// Middleware
-app.use(helmet());
+// Middleware - CORS must come BEFORE helmet
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  }),
+);
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
   }),
 );
 app.use(compression());

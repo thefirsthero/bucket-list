@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
-
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }

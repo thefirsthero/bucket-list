@@ -288,10 +288,10 @@ export default function BucketList() {
 
   if (loading) {
     return (
-      <div className="pt-6 space-y-6">
-        <div className="grid gap-6 md:grid-cols-2">
-          <Skeleton className="h-100" />
-          <Skeleton className="h-100" />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="grid gap-4 md:grid-cols-2 flex-1 overflow-hidden pt-4">
+          <Skeleton className="h-full" />
+          <Skeleton className="h-full" />
         </div>
       </div>
     );
@@ -305,8 +305,8 @@ export default function BucketList() {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="pt-6 space-y-6">
-        <div className="grid gap-6 md:grid-cols-2">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="grid gap-4 md:grid-cols-2 flex-1 overflow-hidden pt-4">
           <BucketListSection
             title="Current Goals"
             category="upcoming_year"

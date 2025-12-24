@@ -46,16 +46,16 @@ export function BucketListItem({
       style={style}
       className={cn("group", isDragging && "opacity-50")}
     >
-      <Card className="p-4">
-        <div className="flex items-start gap-3">
+      <Card className="p-3">
+        <div className="flex items-start gap-2">
           {/* Drag Handle - only show for non-completed items */}
           {!item.completed && (
             <button
-              className="mt-1 cursor-grab active:cursor-grabbing opacity-30 group-hover:opacity-100 transition-opacity"
+              className="mt-0.5 cursor-grab active:cursor-grabbing opacity-30 group-hover:opacity-100 transition-opacity flex-shrink-0"
               {...attributes}
               {...listeners}
             >
-              <GripVertical className="h-5 w-5" />
+              <GripVertical className="h-4 w-4" />
             </button>
           )}
 
@@ -65,28 +65,28 @@ export function BucketListItem({
             onCheckedChange={(checked: boolean) =>
               onToggleComplete(item.id, checked)
             }
-            className="mt-1"
+            className="mt-0.5 flex-shrink-0"
           />
 
           {/* Content */}
           <div className="flex-1 min-w-0">
             <h3
               className={cn(
-                "font-medium text-base",
+                "font-medium text-sm leading-tight",
                 item.completed && "line-through text-muted-foreground",
               )}
             >
               {item.title}
             </h3>
             {item.description && (
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
                 {item.description}
               </p>
             )}
-            <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-2 mt-1.5">
               <span
                 className={cn(
-                  "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white",
+                  "inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white",
                   statusColors[item.status],
                 )}
               >
@@ -98,7 +98,11 @@ export function BucketListItem({
           {/* Actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0 flex-shrink-0"
+              >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

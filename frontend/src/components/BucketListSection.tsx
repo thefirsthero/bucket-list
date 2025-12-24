@@ -47,8 +47,8 @@ export function BucketListSection({
   }, [items]);
 
   return (
-    <Card ref={setNodeRef}>
-      <CardHeader>
+    <Card ref={setNodeRef} className="flex flex-col overflow-hidden h-full">
+      <CardHeader className="flex-shrink-0 pb-3">
         <div className="flex items-center justify-between">
           <CardTitle>{title}</CardTitle>
           <Button onClick={onAddNew} size="sm">
@@ -57,13 +57,13 @@ export function BucketListSection({
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 overflow-y-auto">
         {activeItems.length === 0 && completedItems.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <p>No items yet. Click "Add Item" to get started!</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {/* Active items with drag-and-drop */}
             {activeItems.length > 0 && (
               <SortableContext
@@ -86,8 +86,8 @@ export function BucketListSection({
             {completedItems.length > 0 && (
               <>
                 {activeItems.length > 0 && (
-                  <div className="border-t pt-3 mt-3">
-                    <p className="text-sm text-muted-foreground mb-3">
+                  <div className="border-t pt-2 mt-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       Completed
                     </p>
                   </div>

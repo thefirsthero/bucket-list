@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -51,6 +51,21 @@ export function ItemDialog({
     item?.category || defaultCategory,
   );
   const [status, setStatus] = useState<ItemStatus>(item?.status || "active");
+
+  // Update form when item or defaultCategory changes
+  useEffect(() => {
+    if (item) {
+      setTitle(item.title);
+      setDescription(item.description || "");
+      setCategory(item.category);
+      setStatus(item.status);
+    } else {
+      setTitle("");
+      setDescription("");
+      setCategory(defaultCategory);
+      setStatus("active");
+    }
+  }, [item, defaultCategory]);
 
   const handleSave = () => {
     if (!title.trim()) return;

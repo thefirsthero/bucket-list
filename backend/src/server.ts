@@ -17,13 +17,16 @@ const allowedOrigins = process.env.CORS_ORIGINS
   : ["http://localhost:5173", "http://localhost:5174"];
 
 // Handle preflight requests explicitly FIRST
-app.options("*", cors({
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 204,
-}));
+app.options(
+  "*",
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 204,
+  }),
+);
 
 // Middleware - CORS must come BEFORE helmet
 app.use(

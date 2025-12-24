@@ -4,6 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import dotenv from "dotenv";
 import bucketItemRoutes from "./routes/bucketItems";
+import authRoutes from "./routes/auth";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // API Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/bucket-items", bucketItemRoutes);
 
 // 404 handler

@@ -1,7 +1,11 @@
 import express from "express";
 import * as bucketItemController from "../controllers/bucketItemController";
+import { authenticateToken } from "../middleware/auth";
 
 const router = express.Router();
+
+// Protect all routes
+router.use(authenticateToken);
 
 // Get all items
 router.get("/", bucketItemController.getAllItems);

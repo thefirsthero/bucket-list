@@ -85,6 +85,12 @@ export const updateItem = async (
   if (data.category !== undefined) {
     fields.push(`category = $${paramCount++}`);
     values.push(data.category);
+
+    // If changing to upcoming_year category, set goal_year to current year
+    if (data.category === "upcoming_year") {
+      fields.push(`goal_year = $${paramCount++}`);
+      values.push(new Date().getFullYear());
+    }
   }
   if (data.status !== undefined) {
     fields.push(`status = $${paramCount++}`);

@@ -117,7 +117,20 @@ export default function BucketList() {
 
   const handleToggleComplete = async (id: number, completed: boolean) => {
     try {
-      await apiService.updateItem(id, { completed });
+      const item = items.find((i) => i.id === id);
+
+      if (!item) return;
+
+      // If completing a "Someday" item, move it to "Current Goals" category
+      if (completed && item.category === "general") {
+        await apiService.updateItem(id, {
+          completed: true,
+          category: "upcoming_year",
+        });
+      } else {
+        await apiService.updateItem(id, { completed });
+      }
+
       await fetchItems();
     } catch (error) {
       console.error("Failed to update item:", error);

@@ -36,9 +36,11 @@ export function BucketListSection({
     id: category,
   });
 
-  // Separate items by completion status
+  // Separate items by completion status and sort active items by priority
   useEffect(() => {
-    const active = items.filter((item) => !item.completed);
+    const active = items
+      .filter((item) => !item.completed)
+      .sort((a, b) => a.priority - b.priority);
     const completed = items.filter((item) => item.completed);
     setActiveItems(active);
     setCompletedItems(completed);

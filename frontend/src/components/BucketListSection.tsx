@@ -1,17 +1,7 @@
 import { useState, useEffect } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
@@ -24,7 +14,6 @@ interface BucketListSectionProps {
   title: string;
   category: ItemCategory;
   items: BucketItem[];
-  onItemsReorder: (items: BucketItem[]) => void;
   onToggleComplete: (id: number, completed: boolean) => void;
   onEdit: (item: BucketItem) => void;
   onDelete: (id: number) => void;
@@ -33,8 +22,8 @@ interface BucketListSectionProps {
 
 export function BucketListSection({
   title,
+  category,
   items,
-  onItemsReorder,
   onToggleComplete,
   onEdit,
   onDelete,
@@ -43,12 +32,9 @@ export function BucketListSection({
   const [activeItems, setActiveItems] = useState<BucketItem[]>([]);
   const [completedItems, setCompletedItems] = useState<BucketItem[]>([]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  const { setNodeRef } = useDroppable({
+    id: category,
+  });
 
   // Separate items by completion status
   useEffect(() => {
@@ -58,23 +44,8 @@ export function BucketListSection({
     setCompletedItems(completed);
   }, [items]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const oldIndex = activeItems.findIndex((item) => item.id === active.id);
-      const newIndex = activeItems.findIndex((item) => item.id === over.id);
-
-      if (oldIndex !== -1 && newIndex !== -1) {
-        const reorderedActive = arrayMove(activeItems, oldIndex, newIndex);
-        // Combine reordered active items with completed items
-        onItemsReorder([...reorderedActive, ...completedItems]);
-      }
-    }
-  };
-
   return (
-    <Card>
+    <Card ref={setNodeRef}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{title}</CardTitle>
@@ -93,26 +64,20 @@ export function BucketListSection({
           <div className="space-y-3">
             {/* Active items with drag-and-drop */}
             {activeItems.length > 0 && (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
+              <SortableContext
+                items={activeItems.map((item) => item.id)}
+                strategy={verticalListSortingStrategy}
               >
-                <SortableContext
-                  items={activeItems.map((item) => item.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {activeItems.map((item) => (
-                    <BucketListItem
-                      key={item.id}
-                      item={item}
-                      onToggleComplete={onToggleComplete}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                    />
-                  ))}
-                </SortableContext>
-              </DndContext>
+                {activeItems.map((item) => (
+                  <BucketListItem
+                    key={item.id}
+                    item={item}
+                    onToggleComplete={onToggleComplete}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                ))}
+              </SortableContext>
             )}
 
             {/* Completed items at the bottom */}

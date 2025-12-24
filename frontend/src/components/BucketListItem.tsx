@@ -33,7 +33,7 @@ export function BucketListItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: item.id });
+  } = useSortable({ id: item.id, disabled: item.completed });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -48,14 +48,16 @@ export function BucketListItem({
     >
       <Card className="p-4">
         <div className="flex items-start gap-3">
-          {/* Drag Handle */}
-          <button
-            className="mt-1 cursor-grab active:cursor-grabbing opacity-30 group-hover:opacity-100 transition-opacity"
-            {...attributes}
-            {...listeners}
-          >
-            <GripVertical className="h-5 w-5" />
-          </button>
+          {/* Drag Handle - only show for non-completed items */}
+          {!item.completed && (
+            <button
+              className="mt-1 cursor-grab active:cursor-grabbing opacity-30 group-hover:opacity-100 transition-opacity"
+              {...attributes}
+              {...listeners}
+            >
+              <GripVertical className="h-5 w-5" />
+            </button>
+          )}
 
           {/* Checkbox */}
           <Checkbox

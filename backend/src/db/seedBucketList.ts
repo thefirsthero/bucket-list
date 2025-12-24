@@ -28,28 +28,28 @@ async function seedBucketList() {
     }
     console.log(`✓ Added ${generalItems.length} general items`);
 
-    // Past items - completed and archived (distributed across 2023-2024)
+    // Past items - completed and archived (year unknown, using 0 as sentinel)
     const pastItems = [
-      { title: "Holiday in Sudwala Lodge", year: 2023 },
-      { title: "Go to sugarbay camp", year: 2023 },
-      { title: "Hike Drakensburg", year: 2023 },
-      { title: "Hike Table Mountain", year: 2024 },
-      { title: "Holiday in Durban", year: 2024 },
-      { title: "Holiday in Warm Baths", year: 2024 },
-      { title: "Visit Rustenberg", year: 2024 },
-      { title: "Northgate - Ice skating", year: 2024 },
+      "Holiday in Sudwala Lodge",
+      "Go to sugarbay camp",
+      "Hike Drakensburg",
+      "Hike Table Mountain",
+      "Holiday in Durban",
+      "Holiday in Warm Baths",
+      "Visit Rustenberg",
+      "Northgate - Ice skating",
     ];
 
-    for (const item of pastItems) {
+    for (const title of pastItems) {
       await client.query(
         `INSERT INTO bucket_items (
           title, category, status, completed, completed_at, 
           archived, archived_year, goal_year, priority
         ) 
          VALUES ($1, 'upcoming_year', 'completed', true, 
-                 make_timestamp($2, 6, 15, 12, 0, 0.0), 
-                 true, $2, $2, 0)`,
-        [item.title, item.year],
+                 make_timestamp(2000, 1, 1, 12, 0, 0.0), 
+                 true, 0, 0, 0)`,
+        [title],
       );
     }
     console.log(`✓ Added ${pastItems.length} past (archived) items`);

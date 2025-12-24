@@ -62,7 +62,12 @@ export default function Archive() {
 
   const years = Object.keys(groupedItems)
     .map(Number)
-    .sort((a, b) => b - a);
+    .sort((a, b) => {
+      // Put year 0 (Past/Unknown) at the end
+      if (a === 0) return 1;
+      if (b === 0) return -1;
+      return b - a;
+    });
 
   if (loading) {
     return (
@@ -126,7 +131,9 @@ export default function Archive() {
                     ) : (
                       <ChevronRight className="h-5 w-5 flex-shrink-0" />
                     )}
-                    <CardTitle className="flex-1 text-left">{year}</CardTitle>
+                    <CardTitle className="flex-1 text-left">
+                      {year === 0 ? "Past" : year}
+                    </CardTitle>
                     <span className="text-sm text-muted-foreground">
                       {yearItems.length}{" "}
                       {yearItems.length === 1 ? "item" : "items"}

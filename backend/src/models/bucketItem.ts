@@ -4,6 +4,7 @@ import { BucketItem, CreateBucketItemDTO, UpdateBucketItemDTO } from "../types";
 export const getAllItems = async (): Promise<BucketItem[]> => {
   const result = await query(
     `SELECT * FROM bucket_items 
+     WHERE archived = false
      ORDER BY 
        CASE WHEN completed = true THEN 1 ELSE 0 END,
        priority ASC, 
@@ -17,7 +18,7 @@ export const getItemsByCategory = async (
 ): Promise<BucketItem[]> => {
   const result = await query(
     `SELECT * FROM bucket_items 
-     WHERE category = $1
+     WHERE category = $1 AND archived = false
      ORDER BY 
        CASE WHEN completed = true THEN 1 ELSE 0 END,
        priority ASC, 
@@ -37,15 +38,21 @@ export const createItem = async (
 ): Promise<BucketItem> => {
   // Get the highest priority in the category
   const priorityResult = await query(
-    "SELECT COALESCE(MAX(priority), 0) + 1 as next_priority FROM bucket_items WHERE category = $1",
+    "SELECT COALESCE(MAX(priority), 0) + 1 as next_priority FROM bucket_items WHERE category = $1 AND archived = false",
     [data.category],
   );
 
   const priority = data.priority ?? priorityResult.rows[0].next_priority;
 
+  // Set goal_year to current year for upcoming_year items
+  const goalYear =
+    data.category === "upcoming_year"
+      ? data.goal_year ?? new Date().getFullYear()
+      : null;
+
   const result = await query(
-    `INSERT INTO bucket_items (title, description, category, status, priority)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO bucket_items (title, description, category, status, priority, goal_year)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
     [
       data.title,
@@ -53,6 +60,7 @@ export const createItem = async (
       data.category,
       data.status || "active",
       priority,
+      goalYear,
     ],
   );
   return result.rows[0];
@@ -138,4 +146,59 @@ export const reorderItems = async (
     await query("ROLLBACK", []);
     throw error;
   }
+};
+
+export const getArchivedItems = async (): Promise<BucketItem[]> => {
+  const result = await query(
+    `SELECT * FROM bucket_items 
+     WHERE archived = true
+     ORDER BY archived_year DESC, completed_at DESC`,
+  );
+  return result.rows;
+};
+
+export const getArchivedItemsByYear = async (
+  year: number,
+): Promise<BucketItem[]> => {
+  const result = await query(
+    `SELECT * FROM bucket_items 
+     WHERE archived = true AND archived_year = $1
+     ORDER BY completed_at DESC`,
+    [year],
+  );
+  return result.rows;
+};
+
+export const archivePreviousYearItems = async (): Promise<number> => {
+  const currentYear = new Date().getFullYear();
+  const previousYear = currentYear - 1;
+
+  const result = await query(
+    `UPDATE bucket_items 
+     SET archived = true, archived_year = $1
+     WHERE category = 'upcoming_year' 
+       AND completed = true 
+       AND archived = false
+       AND (goal_year < $2 OR (goal_year = $2 AND EXTRACT(YEAR FROM completed_at) < $2))
+     RETURNING id`,
+    [previousYear, currentYear],
+  );
+
+  return result.rowCount || 0;
+};
+
+export const updateGoalYearForCurrentItems = async (): Promise<number> => {
+  const currentYear = new Date().getFullYear();
+
+  const result = await query(
+    `UPDATE bucket_items 
+     SET goal_year = $1
+     WHERE category = 'upcoming_year' 
+       AND archived = false
+       AND (goal_year IS NULL OR goal_year < $1)
+     RETURNING id`,
+    [currentYear],
+  );
+
+  return result.rowCount || 0;
 };

@@ -15,6 +15,9 @@ export interface BucketItem {
   priority: number;
   completed: boolean;
   completed_at?: Date;
+  archived: boolean;
+  archived_year?: number;
+  goal_year?: number;
   created_at: Date;
   updated_at: Date;
 }
@@ -25,6 +28,7 @@ export interface CreateBucketItemDTO {
   category: ItemCategory;
   status?: ItemStatus;
   priority?: number;
+  goal_year?: number;
 }
 
 export interface UpdateBucketItemDTO {

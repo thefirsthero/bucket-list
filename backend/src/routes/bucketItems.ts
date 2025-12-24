@@ -24,4 +24,13 @@ router.delete("/:id", bucketItemController.deleteItem);
 // Reorder items
 router.post("/reorder", bucketItemController.reorderItems);
 
+// Get archived items
+router.get("/archive/all", bucketItemController.getArchivedItems);
+
+// Get archived items by year
+router.get("/archive/:year", bucketItemController.getArchivedItemsByYear);
+
+// Archive previous year's completed items
+router.post("/archive/previous-year", bucketItemController.archivePreviousYear);
+
 export default router;

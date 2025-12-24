@@ -131,3 +131,47 @@ export const reorderItems = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to reorder items" });
   }
 };
+
+export const getArchivedItems = async (req: Request, res: Response) => {
+  try {
+    const items = await BucketItemModel.getArchivedItems();
+    res.json(items);
+  } catch (error) {
+    console.error("Error fetching archived items:", error);
+    res.status(500).json({ error: "Failed to fetch archived items" });
+  }
+};
+
+export const getArchivedItemsByYear = async (req: Request, res: Response) => {
+  try {
+    const year = parseInt(req.params.year);
+
+    if (isNaN(year)) {
+      return res.status(400).json({ error: "Invalid year" });
+    }
+
+    const items = await BucketItemModel.getArchivedItemsByYear(year);
+    res.json(items);
+  } catch (error) {
+    console.error("Error fetching archived items by year:", error);
+    res.status(500).json({ error: "Failed to fetch archived items" });
+  }
+};
+
+export const archivePreviousYear = async (req: Request, res: Response) => {
+  try {
+    // First update goal years for current items
+    await BucketItemModel.updateGoalYearForCurrentItems();
+
+    // Then archive previous year's completed items
+    const archivedCount = await BucketItemModel.archivePreviousYearItems();
+
+    res.json({
+      message: "Previous year items archived successfully",
+      archivedCount,
+    });
+  } catch (error) {
+    console.error("Error archiving previous year items:", error);
+    res.status(500).json({ error: "Failed to archive items" });
+  }
+};

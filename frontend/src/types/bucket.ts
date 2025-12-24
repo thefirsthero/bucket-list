@@ -15,6 +15,9 @@ export interface BucketItem {
   priority: number;
   completed: boolean;
   completed_at?: string;
+  archived: boolean;
+  archived_year?: number;
+  goal_year?: number;
   created_at: string;
   updated_at: string;
 }

@@ -1,4 +1,4 @@
-import { ListTodo, LucideIcon } from "lucide-react";
+import { ListTodo, Archive, LucideIcon } from "lucide-react";
 
 type MenuItemType = {
   title: string;
@@ -14,5 +14,10 @@ export const mainMenu: MenuType = [
     title: "Bucket List",
     url: "/",
     icon: ListTodo,
+  },
+  {
+    title: "Archive",
+    url: "/archive",
+    icon: Archive,
   },
 ];

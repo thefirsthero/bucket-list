@@ -24,6 +24,7 @@ export default function BucketList() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BucketItem | null>(null);
   const [dialogCategory, setDialogCategory] = useState<ItemCategory>("general");
+  const [currentYear] = useState(new Date().getFullYear());
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -33,8 +34,29 @@ export default function BucketList() {
   );
 
   useEffect(() => {
-    fetchItems();
+    initializeData();
   }, []);
+
+  const initializeData = async () => {
+    try {
+      // Check if we need to archive previous year's items
+      const lastArchiveCheck = localStorage.getItem("lastArchiveCheck");
+      const currentYear = new Date().getFullYear();
+
+      if (!lastArchiveCheck || parseInt(lastArchiveCheck) < currentYear) {
+        // Archive previous year's completed items
+        await apiService.archivePreviousYear();
+        localStorage.setItem("lastArchiveCheck", currentYear.toString());
+      }
+
+      // Fetch current items
+      await fetchItems();
+    } catch (error) {
+      console.error("Failed to initialize data:", error);
+      // Still try to fetch items even if archiving fails
+      await fetchItems();
+    }
+  };
 
   const fetchItems = async () => {
     try {
@@ -308,7 +330,7 @@ export default function BucketList() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="grid gap-4 md:grid-cols-2 flex-1 overflow-hidden pt-4">
           <BucketListSection
-            title="Current Goals"
+            title={`Current Goals (${currentYear})`}
             category="upcoming_year"
             items={upcomingYearItems}
             onToggleComplete={handleToggleComplete}

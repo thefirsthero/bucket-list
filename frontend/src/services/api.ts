@@ -95,6 +95,26 @@ class ApiService {
     });
   }
 
+  // Get archived items
+  async getArchivedItems(): Promise<BucketItem[]> {
+    return this.request<BucketItem[]>("/api/bucket-items/archive/all");
+  }
+
+  // Get archived items by year
+  async getArchivedItemsByYear(year: number): Promise<BucketItem[]> {
+    return this.request<BucketItem[]>(`/api/bucket-items/archive/${year}`);
+  }
+
+  // Archive previous year's completed items
+  async archivePreviousYear(): Promise<{
+    message: string;
+    archivedCount: number;
+  }> {
+    return this.request("/api/bucket-items/archive/previous-year", {
+      method: "POST",
+    });
+  }
+
   // Health check
   async healthCheck(): Promise<{
     status: string;

@@ -125,10 +125,14 @@ export default function BucketList() {
       if (completed && item.category === "general") {
         await apiService.updateItem(id, {
           completed: true,
+          status: "completed",
           category: "upcoming_year",
         });
       } else {
-        await apiService.updateItem(id, { completed });
+        await apiService.updateItem(id, {
+          completed,
+          status: completed ? "completed" : "active",
+        });
       }
 
       await fetchItems();

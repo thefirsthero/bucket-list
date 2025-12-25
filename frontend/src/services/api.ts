@@ -19,6 +19,7 @@ class ApiService {
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const token = localStorage.getItem("auth_token");
+    const apiKey = import.meta.env.VITE_API_KEY;
 
     try {
       const response = await fetch(url, {
@@ -26,6 +27,7 @@ class ApiService {
         headers: {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
+          ...(apiKey && { "X-API-Key": apiKey }),
           ...options?.headers,
         },
       });

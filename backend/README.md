@@ -40,6 +40,10 @@ DATABASE_SSL=true
 DB_SCHEMA=bucket_list
 JWT_SECRET=<generated-secret-from-above>
 PORT=3001
+
+# API Security
+# Generate a secure random key: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+API_KEY=your-secure-api-key-here
 ```
 
 4. Run database migrations:

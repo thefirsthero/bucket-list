@@ -201,13 +201,18 @@ DATABASE_SSL=true
 DB_SCHEMA=bucket_list
 PORT=3001
 NODE_ENV=development
+JWT_SECRET=generate-with-node-crypto
+API_KEY=your-secure-api-key-here
 ```
 
 **Frontend `.env`**:
 
 ```env
 VITE_API_URL=http://localhost:3001
+VITE_API_KEY=your-secure-api-key-here
 ```
+
+**Note:** The frontend `VITE_API_KEY` must match the backend `API_KEY`.
 
 ### 🔧 Project Structure
 

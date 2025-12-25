@@ -5,6 +5,7 @@ import compression from "compression";
 import dotenv from "dotenv";
 import bucketItemRoutes from "./routes/bucketItems";
 import authRoutes from "./routes/auth";
+import { verifyApiKey } from "./middleware/apiKey";
 
 dotenv.config();
 
@@ -27,6 +28,9 @@ app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// API Key verification middleware
+app.use(verifyApiKey);
 
 // Request logging middleware
 app.use((req: Request, res: Response, next: NextFunction) => {

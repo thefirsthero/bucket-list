@@ -70,12 +70,19 @@ DATABASE_SSL=true
 DB_SCHEMA=bucket_list
 JWT_SECRET=<generate-with-command-below>
 PORT=3001
+API_KEY=<generate-with-command-below>
 ```
 
 Generate JWT secret:
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Generate API key:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 Frontend `.env`:
@@ -89,6 +96,7 @@ Edit `frontend/.env`:
 
 ```env
 VITE_API_URL=http://localhost:3001
+VITE_API_KEY=<same-as-backend-API_KEY>
 ```
 
 3. **Set up authentication**

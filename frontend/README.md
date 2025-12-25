@@ -30,7 +30,10 @@ Create a `.env` file:
 
 ```env
 VITE_API_URL=http://localhost:3001
+VITE_API_KEY=your-secure-api-key-here
 ```
+
+**Note:** The `VITE_API_KEY` must match the backend's `API_KEY` environment variable.
 
 ## Project Structure
 

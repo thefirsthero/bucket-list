@@ -1,0 +1,354 @@
+{
+  "info": {
+    "_postman_id": "bucket-list-api-2025",
+    "name": "Bucket List API",
+    "description": "Express backend for Bucket List application with PostgreSQL",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "{{API_KEY}}",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "X-API-Key",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{API_KEY}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticate user and return JWT token"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bucket Items",
+      "item": [
+        {
+          "name": "Get All Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items"]
+            },
+            "description": "Get all bucket list items for authenticated user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Item by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/:id",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get a specific bucket item by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Items by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/category/:category",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", "category", ":category"],
+              "variable": [
+                {
+                  "key": "category",
+                  "value": "travel"
+                }
+              ]
+            },
+            "description": "Get bucket items filtered by category"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Visit the Grand Canyon\",\n  \"description\": \"Hike to the bottom and camp overnight\",\n  \"category\": \"travel\",\n  \"target_date\": \"2025-12-31\",\n  \"priority\": \"high\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items"]
+            },
+            "description": "Create a new bucket list item"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Item",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Visit the Grand Canyon - Updated\",\n  \"completed\": true,\n  \"completion_date\": \"2025-07-15\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/:id",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Update an existing bucket item"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/:id",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Delete a bucket item"
+          },
+          "response": []
+        },
+        {
+          "name": "Reorder Items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\"id\": 3, \"sort_order\": 1},\n    {\"id\": 1, \"sort_order\": 2},\n    {\"id\": 2, \"sort_order\": 3}\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/reorder",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", "reorder"]
+            },
+            "description": "Reorder bucket items with new sort order"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Archived Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/archive/all",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", "archive", "all"]
+            },
+            "description": "Get all archived items"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Archived Items by Year",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/archive/:year",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", "archive", ":year"],
+              "variable": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                }
+              ]
+            },
+            "description": "Get archived items for a specific year"
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Previous Year",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bucket-items/archive/previous-year",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bucket-items", "archive", "previous-year"]
+            },
+            "description": "Archive all completed items from the previous year"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{API_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/health",
+          "host": ["{{BASE_URL}}"],
+          "path": ["health"]
+        },
+        "description": "API health status check"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "API_KEY",
+      "value": "your-secure-api-key-here",
+      "type": "string"
+    },
+    {
+      "key": "JWT_TOKEN",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

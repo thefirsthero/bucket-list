@@ -3,9 +3,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// Remove sslmode from connection string as we'll handle SSL in config
+const connectionString = process.env.DATABASE_URL?.replace(
+  /[?&]sslmode=\w+/,
+  "",
+);
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   ssl:
+    process.env.DATABASE_URL?.includes("sslmode=require") ||
     process.env.DATABASE_SSL === "true"
       ? {
           rejectUnauthorized: false,

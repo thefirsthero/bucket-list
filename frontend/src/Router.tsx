@@ -4,12 +4,14 @@ import NotMatch from "./pages/NotMatch";
 import BucketList from "./pages/BucketList";
 import Archive from "./pages/Archive";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function Router() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route
         element={
           <ProtectedRoute>

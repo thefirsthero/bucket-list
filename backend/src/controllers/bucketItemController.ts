@@ -8,7 +8,8 @@ import {
 
 export const getAllItems = async (req: Request, res: Response) => {
   try {
-    const items = await BucketItemModel.getAllItems();
+    const userId = req.userId!;
+    const items = await BucketItemModel.getAllItems(userId);
     res.json(items);
   } catch (error) {
     console.error("Error fetching items:", error);
@@ -18,13 +19,14 @@ export const getAllItems = async (req: Request, res: Response) => {
 
 export const getItemsByCategory = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
     const { category } = req.params;
 
     if (!["upcoming_year", "general"].includes(category)) {
       return res.status(400).json({ error: "Invalid category" });
     }
 
-    const items = await BucketItemModel.getItemsByCategory(category);
+    const items = await BucketItemModel.getItemsByCategory(userId, category);
     res.json(items);
   } catch (error) {
     console.error("Error fetching items by category:", error);
@@ -34,13 +36,14 @@ export const getItemsByCategory = async (req: Request, res: Response) => {
 
 export const getItemById = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
     const id = parseInt(req.params.id);
 
     if (isNaN(id)) {
       return res.status(400).json({ error: "Invalid item ID" });
     }
 
-    const item = await BucketItemModel.getItemById(id);
+    const item = await BucketItemModel.getItemById(userId, id);
 
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
@@ -55,6 +58,7 @@ export const getItemById = async (req: Request, res: Response) => {
 
 export const createItem = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
     const data: CreateBucketItemDTO = req.body;
 
     if (!data.title || !data.category) {
@@ -65,7 +69,7 @@ export const createItem = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Invalid category" });
     }
 
-    const item = await BucketItemModel.createItem(data);
+    const item = await BucketItemModel.createItem(userId, data);
     res.status(201).json(item);
   } catch (error) {
     console.error("Error creating item:", error);
@@ -75,6 +79,7 @@ export const createItem = async (req: Request, res: Response) => {
 
 export const updateItem = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
     const id = parseInt(req.params.id);
 
     if (isNaN(id)) {
@@ -82,7 +87,7 @@ export const updateItem = async (req: Request, res: Response) => {
     }
 
     const data: UpdateBucketItemDTO = req.body;
-    const item = await BucketItemModel.updateItem(id, data);
+    const item = await BucketItemModel.updateItem(userId, id, data);
 
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
@@ -97,13 +102,14 @@ export const updateItem = async (req: Request, res: Response) => {
 
 export const deleteItem = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
     const id = parseInt(req.params.id);
 
     if (isNaN(id)) {
       return res.status(400).json({ error: "Invalid item ID" });
     }
 
-    const success = await BucketItemModel.deleteItem(id);
+    const success = await BucketItemModel.deleteItem(userId, id);
 
     if (!success) {
       return res.status(404).json({ error: "Item not found" });
@@ -118,13 +124,14 @@ export const deleteItem = async (req: Request, res: Response) => {
 
 export const reorderItems = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
     const data: ReorderItemsDTO = req.body;
 
     if (!data.items || !Array.isArray(data.items)) {
       return res.status(400).json({ error: "Items array is required" });
     }
 
-    await BucketItemModel.reorderItems(data.items);
+    await BucketItemModel.reorderItems(userId, data.items);
     res.json({ message: "Items reordered successfully" });
   } catch (error) {
     console.error("Error reordering items:", error);
@@ -134,7 +141,8 @@ export const reorderItems = async (req: Request, res: Response) => {
 
 export const getArchivedItems = async (req: Request, res: Response) => {
   try {
-    const items = await BucketItemModel.getArchivedItems();
+    const userId = req.userId!;
+    const items = await BucketItemModel.getArchivedItems(userId);
     res.json(items);
   } catch (error) {
     console.error("Error fetching archived items:", error);
@@ -144,13 +152,14 @@ export const getArchivedItems = async (req: Request, res: Response) => {
 
 export const getArchivedItemsByYear = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
     const year = parseInt(req.params.year);
 
     if (isNaN(year)) {
       return res.status(400).json({ error: "Invalid year" });
     }
 
-    const items = await BucketItemModel.getArchivedItemsByYear(year);
+    const items = await BucketItemModel.getArchivedItemsByYear(userId, year);
     res.json(items);
   } catch (error) {
     console.error("Error fetching archived items by year:", error);
@@ -160,11 +169,15 @@ export const getArchivedItemsByYear = async (req: Request, res: Response) => {
 
 export const archivePreviousYear = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId!;
+
     // First update goal years for current items
-    await BucketItemModel.updateGoalYearForCurrentItems();
+    await BucketItemModel.updateGoalYearForCurrentItems(userId);
 
     // Then archive previous year's completed items
-    const archivedCount = await BucketItemModel.archivePreviousYearItems();
+    const archivedCount = await BucketItemModel.archivePreviousYearItems(
+      userId,
+    );
 
     res.json({
       message: "Previous year items archived successfully",

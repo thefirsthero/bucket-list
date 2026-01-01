@@ -1,45 +1,54 @@
 import { query } from "../config/database";
 import { BucketItem, CreateBucketItemDTO, UpdateBucketItemDTO } from "../types";
 
-export const getAllItems = async (): Promise<BucketItem[]> => {
+export const getAllItems = async (userId: number): Promise<BucketItem[]> => {
   const result = await query(
     `SELECT * FROM bucket_items 
-     WHERE archived = false
+     WHERE user_id = $1 AND archived = false
      ORDER BY 
        CASE WHEN completed = true THEN 1 ELSE 0 END,
        priority ASC, 
        created_at DESC`,
+    [userId],
   );
   return result.rows;
 };
 
 export const getItemsByCategory = async (
+  userId: number,
   category: string,
 ): Promise<BucketItem[]> => {
   const result = await query(
     `SELECT * FROM bucket_items 
-     WHERE category = $1 AND archived = false
+     WHERE user_id = $1 AND category = $2 AND archived = false
      ORDER BY 
        CASE WHEN completed = true THEN 1 ELSE 0 END,
        priority ASC, 
        created_at DESC`,
-    [category],
+    [userId, category],
   );
   return result.rows;
 };
 
-export const getItemById = async (id: number): Promise<BucketItem | null> => {
-  const result = await query("SELECT * FROM bucket_items WHERE id = $1", [id]);
+export const getItemById = async (
+  userId: number,
+  id: number,
+): Promise<BucketItem | null> => {
+  const result = await query(
+    "SELECT * FROM bucket_items WHERE id = $1 AND user_id = $2",
+    [id, userId],
+  );
   return result.rows[0] || null;
 };
 
 export const createItem = async (
+  userId: number,
   data: CreateBucketItemDTO,
 ): Promise<BucketItem> => {
-  // Get the highest priority in the category
+  // Get the highest priority in the category for this user
   const priorityResult = await query(
-    "SELECT COALESCE(MAX(priority), 0) + 1 as next_priority FROM bucket_items WHERE category = $1 AND archived = false",
-    [data.category],
+    "SELECT COALESCE(MAX(priority), 0) + 1 as next_priority FROM bucket_items WHERE user_id = $1 AND category = $2 AND archived = false",
+    [userId, data.category],
   );
 
   const priority = data.priority ?? priorityResult.rows[0].next_priority;
@@ -51,10 +60,11 @@ export const createItem = async (
       : null;
 
   const result = await query(
-    `INSERT INTO bucket_items (title, description, category, status, priority, goal_year)
-     VALUES ($1, $2, $3, $4, $5, $6)
+    `INSERT INTO bucket_items (user_id, title, description, category, status, priority, goal_year)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
     [
+      userId,
       data.title,
       data.description || null,
       data.category,
@@ -67,6 +77,7 @@ export const createItem = async (
 };
 
 export const updateItem = async (
+  userId: number,
   id: number,
   data: UpdateBucketItemDTO,
 ): Promise<BucketItem | null> => {
@@ -112,14 +123,15 @@ export const updateItem = async (
   }
 
   if (fields.length === 0) {
-    return getItemById(id);
+    return getItemById(userId, id);
   }
 
   values.push(id);
+  values.push(userId);
   const result = await query(
     `UPDATE bucket_items 
      SET ${fields.join(", ")}
-     WHERE id = $${paramCount}
+     WHERE id = $${paramCount} AND user_id = $${paramCount + 1}
      RETURNING *`,
     values,
   );
@@ -127,25 +139,29 @@ export const updateItem = async (
   return result.rows[0] || null;
 };
 
-export const deleteItem = async (id: number): Promise<boolean> => {
+export const deleteItem = async (
+  userId: number,
+  id: number,
+): Promise<boolean> => {
   const result = await query(
-    "DELETE FROM bucket_items WHERE id = $1 RETURNING id",
-    [id],
+    "DELETE FROM bucket_items WHERE id = $1 AND user_id = $2 RETURNING id",
+    [id, userId],
   );
   return result.rowCount ? result.rowCount > 0 : false;
 };
 
 export const reorderItems = async (
+  userId: number,
   items: Array<{ id: number; priority: number }>,
 ): Promise<void> => {
   const client = await query("BEGIN", []);
 
   try {
     for (const item of items) {
-      await query("UPDATE bucket_items SET priority = $1 WHERE id = $2", [
-        item.priority,
-        item.id,
-      ]);
+      await query(
+        "UPDATE bucket_items SET priority = $1 WHERE id = $2 AND user_id = $3",
+        [item.priority, item.id, userId],
+      );
     }
     await query("COMMIT", []);
   } catch (error) {
@@ -154,56 +170,66 @@ export const reorderItems = async (
   }
 };
 
-export const getArchivedItems = async (): Promise<BucketItem[]> => {
+export const getArchivedItems = async (
+  userId: number,
+): Promise<BucketItem[]> => {
   const result = await query(
     `SELECT * FROM bucket_items 
-     WHERE archived = true
+     WHERE user_id = $1 AND archived = true
      ORDER BY archived_year DESC, completed_at DESC`,
+    [userId],
   );
   return result.rows;
 };
 
 export const getArchivedItemsByYear = async (
+  userId: number,
   year: number,
 ): Promise<BucketItem[]> => {
   const result = await query(
     `SELECT * FROM bucket_items 
-     WHERE archived = true AND archived_year = $1
+     WHERE user_id = $1 AND archived = true AND archived_year = $2
      ORDER BY completed_at DESC`,
-    [year],
+    [userId, year],
   );
   return result.rows;
 };
 
-export const archivePreviousYearItems = async (): Promise<number> => {
+export const archivePreviousYearItems = async (
+  userId: number,
+): Promise<number> => {
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
 
   const result = await query(
     `UPDATE bucket_items 
      SET archived = true, archived_year = $1
-     WHERE category = 'upcoming_year' 
+     WHERE user_id = $2
+       AND category = 'upcoming_year' 
        AND completed = true 
        AND archived = false
-       AND (goal_year < $2 OR (goal_year = $2 AND EXTRACT(YEAR FROM completed_at) < $2))
+       AND (goal_year < $3 OR (goal_year = $3 AND EXTRACT(YEAR FROM completed_at) < $3))
      RETURNING id`,
-    [previousYear, currentYear],
+    [previousYear, userId, currentYear],
   );
 
   return result.rowCount || 0;
 };
 
-export const updateGoalYearForCurrentItems = async (): Promise<number> => {
+export const updateGoalYearForCurrentItems = async (
+  userId: number,
+): Promise<number> => {
   const currentYear = new Date().getFullYear();
 
   const result = await query(
     `UPDATE bucket_items 
      SET goal_year = $1
-     WHERE category = 'upcoming_year' 
+     WHERE user_id = $2
+       AND category = 'upcoming_year' 
        AND archived = false
        AND (goal_year IS NULL OR goal_year < $1)
      RETURNING id`,
-    [currentYear],
+    [currentYear, userId],
   );
 
   return result.rowCount || 0;
